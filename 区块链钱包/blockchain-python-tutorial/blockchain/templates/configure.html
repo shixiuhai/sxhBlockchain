@@ -96,6 +96,8 @@
 
     <!-- Bootstrap core JavaScript -->
     <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/static/vendor/jquery/jquery.serializejson.js"></script>
     <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="/static/vendor/DataTables/js/datatables.min.js"></script>
     <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
@@ -106,12 +108,13 @@
 
           $("#add_node_button").click(function () {
             //console.log($('#confirmation_transaction_form').serialize());
-
+            console.log("=========")
             $.ajax({
               url: "/nodes/register",
               type: "POST",
               dataType : 'json',
-              data: $('#node_form').serialize(),
+              contentType:"application/json",
+              data: JSON.stringify($('#node_form').serializeJSON())
               success: function(response){
 
                 console.log(response);

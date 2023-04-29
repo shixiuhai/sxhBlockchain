@@ -36,6 +36,7 @@ from uuid import uuid4
 import requests
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
+from urllib.parse import urlparse
 
 
 
@@ -61,15 +62,8 @@ class Blockchain:
         """
         Add a new node to the list of nodes
         """
-        #Checking node_url has valid format
         parsed_url = urlparse(node_url)
-        if parsed_url.netloc:
-            self.nodes.add(parsed_url.netloc)
-        elif parsed_url.path:
-            # Accepts an URL without scheme like '192.168.0.5:5000'.
-            self.nodes.add(parsed_url.path)
-        else:
-            raise ValueError('Invalid URL')
+        self.nodes.add(parsed_url.netloc)
 
 
     def verify_transaction_signature(self, sender_address, signature, transaction):
@@ -295,9 +289,9 @@ def mine():
 
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
-    values = request.form
-    nodes = values.get('nodes').replace(" ", "").split(',')
-
+    values = request.get_json()
+    print(values)
+    nodes = values.get('nodes')
     if nodes is None:
         return "Error: Please supply a valid list of nodes", 400
 
@@ -306,7 +300,7 @@ def register_nodes():
 
     response = {
         'message': 'New nodes have been added',
-        'total_nodes': [node for node in blockchain.nodes],
+        'total_nodes': list(blockchain.nodes),
     }
     return jsonify(response), 201
 
@@ -340,7 +334,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5001, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 
