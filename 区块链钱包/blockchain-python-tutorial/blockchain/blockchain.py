@@ -42,7 +42,7 @@ from urllib.parse import urlparse
 
 MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1
-MINING_DIFFICULTY = 2
+MINING_DIFFICULTY = 1
 
 
 class Blockchain:
