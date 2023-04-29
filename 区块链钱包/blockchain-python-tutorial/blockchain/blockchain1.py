@@ -18,7 +18,7 @@ References      : [1] https://github.com/dvf/blockchain/blob/master/blockchain.p
 '''
 
 from collections import OrderedDict
-
+import json
 import binascii
 
 import Crypto
@@ -290,12 +290,10 @@ def mine():
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
     values = request.get_json()
-    print(values)
     nodes = values.get('nodes')
     if nodes is None:
         return "Error: Please supply a valid list of nodes", 400
-
-    for node in nodes:
+    for node in nodes.split(","):
         blockchain.register_node(node)
 
     response = {

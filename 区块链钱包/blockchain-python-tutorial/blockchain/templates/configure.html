@@ -107,16 +107,13 @@
       $(function(){
 
           $("#add_node_button").click(function () {
-            //console.log($('#confirmation_transaction_form').serialize());
-            console.log("=========")
             $.ajax({
               url: "/nodes/register",
               type: "POST",
               dataType : 'json',
               contentType:"application/json",
-              data: JSON.stringify($('#node_form').serializeJSON())
+              data: JSON.stringify($('#node_form').serializeJSON()),
               success: function(response){
-
                 console.log(response);
                 document.getElementById("nodes").value = "";  
                 window.location.reload();
