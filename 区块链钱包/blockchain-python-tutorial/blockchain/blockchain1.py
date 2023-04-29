@@ -39,9 +39,10 @@ from flask_cors import CORS
 from urllib.parse import urlparse
 
 
+
 MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1
-MINING_DIFFICULTY = 1
+MINING_DIFFICULTY = 5
 MINING_RECEVER='30819f300d06092a864886f70d010101050003818d0030818902818100b93af46273ca957652d536f2448d3d345bdc192a30052775729cf54a0f07bc4d9b9cedaf88657133f1e083c89dc9e97d7867c065e8405c063f96c471f252aad134b611cd0ebe1f1518f8d61c828b2d5d4f80ef66a0828a64a5ca24ba3f0d956d6e409a25fbd501b6b8ed662acd5c6f3de8db37ad6131b418ca1b427e9f80b3010203010001'
 
 
@@ -58,6 +59,10 @@ class Blockchain:
         #Create genesis block
         self.create_block(0, '00')
 
+    def get_reward(self,chain_length:int)->int:
+        if chain_length<=26000000:
+            chain_length=26000000
+        return 1*(26000000/chain_length)
 
     def register_node(self, node_url):
         """
@@ -133,7 +138,6 @@ class Blockchain:
         """
         last_block = self.chain[-1]
         last_hash = self.hash(last_block)
-
         nonce = 0
         while self.valid_proof(self.transactions, last_hash, nonce) is False:
             nonce += 1
@@ -229,8 +233,6 @@ def index():
 def configure():
     return render_template('./configure.html')
 
-
-
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.form
@@ -270,7 +272,8 @@ def mine():
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.chain[-1]
     nonce = blockchain.proof_of_work()
-
+    # 计算收益
+    MINING_REWARD=blockchain.get_reward(len(blockchain.chain))
     # We must receive a reward for finding the proof.
     blockchain.submit_transaction(sender_address=MINING_SENDER, recipient_address=blockchain.node_id, value=MINING_REWARD, signature="")
 
