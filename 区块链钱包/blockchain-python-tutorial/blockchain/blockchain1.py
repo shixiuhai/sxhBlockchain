@@ -194,7 +194,16 @@ class Blockchain:
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
             print('http://' + node + '/chain')
-            response = requests.get('http://' + node + '/chain')
+            try:
+                response = requests.get('http://' + node + '/chain')
+            except Exception as error:
+                try:
+                    response = requests.get('http://' + node + '/chain')
+                except Exception as error:
+                    self.nodes.remove(node)
+                    continue
+                
+                
 
             if response.status_code == 200:
                 length = response.json()['length']
@@ -294,6 +303,8 @@ def register_nodes():
     if nodes is None:
         return "Error: Please supply a valid list of nodes", 400
     for node in nodes.split(","):
+        if node=="" or node==" ":
+            continue
         blockchain.register_node(node)
 
     response = {
@@ -332,7 +343,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=5001, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 
