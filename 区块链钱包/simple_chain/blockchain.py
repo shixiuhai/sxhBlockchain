@@ -139,8 +139,8 @@ class Blockchain:
     def hash(block: Dict[str, Any]) -> str:
         """
         生成块的 SHA-256 hash值
-
         :param block: Block
+        :return 
         """
 
         # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
@@ -190,6 +190,7 @@ def mine():
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
     last_proof = last_block['proof']
+    
     proof = blockchain.proof_of_work(last_proof)
 
     # 给工作量证明的节点提供奖励.
@@ -216,7 +217,7 @@ def mine():
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.get_json()
-
+    print(values)
     # 检查POST数据
     required = ['sender', 'recipient', 'amount']
     if not all(k in values for k in required):
